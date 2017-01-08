@@ -80,7 +80,7 @@ def get_video_url( page_url , premium = False , user="" , password="", video_pas
 
     video_urls = []
     if url != "":
-        video_urls.append( [ "para Web (rtmp) [aragontv]" , url ] )
+        video_urls.append( [ "para Web (m3u8) [aragontv]" , url ] )
 
     for video_url in video_urls:
         logger.info("[aragontv.py] %s - %s" % (video_url[0],video_url[1]))
@@ -92,20 +92,7 @@ def get_video_url_from_page(page_url):
     data = scrapertools.cache_page(page_url)
 
     try:
-        final = scrapertools.get_match(data,"url\:'(mp4\%3A[^']+)'")
-        principio = scrapertools.get_match(data,"netConnectionUrl\: '([^']+)'")
-
-        if urllib.unquote(principio).startswith("rtmp://aragon") or urllib.unquote(principio).startswith("rtmp://iasoft"):
-            url = principio+"/"+final[9:]
-        else:
-            url = principio+"/"+final
-        url = urllib.unquote(url)
-
-        host = scrapertools.find_single_match(url,'(rtmp://[^/]+)')
-        app = scrapertools.find_single_match(url,'rtmp://[^/]+/(.*?)/mp4\:')
-        playpath = scrapertools.find_single_match(url,'rtmp://[^/]+/.*?/(mp4\:.*?)$')
-
-        url = host+' app='+app+' playpath='+playpath
+        url = scrapertools.get_match(data,'src\: "([^"]+)\.m3u8"') + ".m3u8"
 
         logger.info("url="+url)
     except:
